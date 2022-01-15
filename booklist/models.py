@@ -4,7 +4,7 @@ from django.template.defaultfilters import slugify
 
 
 class SlugIncludedModel(models.Model):
-    slug = models.SlugField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
     slug_attribute = 'name'
 
     def save(self, *args, **kwargs):
