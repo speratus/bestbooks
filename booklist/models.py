@@ -42,7 +42,7 @@ class Author(SlugIncludedModel):
     name = models.CharField(max_length=255)
     birthdate = models.DateField(auto_now=False)
     bio = models.TextField()
-    tags = models.ManyToManyField('Tag', related_name='tags')
+    tags = models.ManyToManyField('Tag', related_name='authors')
     # books = models.ManyToManyField('Book')
 
     def __str__(self):
@@ -59,10 +59,10 @@ class Book(SlugIncludedModel):
     url = models.URLField(max_length=512, blank=True)
     rating = models.IntegerField()
     cover_art = models.URLField(max_length=512, blank=True)
-    author = models.ManyToManyField('Author', related_name='authors')
-    tags = models.ManyToManyField('Tag', related_name='tags')
-    category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='categories')
-    genres = models.ManyToManyField('Genre', related_name='genres')
+    author = models.ManyToManyField('Author', related_name='books')
+    tags = models.ManyToManyField('Tag', related_name='books')
+    category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='books')
+    genres = models.ManyToManyField('Genre', related_name='books')
 
     slug_attribute = 'title'
 
