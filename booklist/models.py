@@ -1,14 +1,28 @@
 from django.db import models
 
+from django.template.defaultfilters import slugify
 
-class Tag(models.Model):
+
+class SlugIncludedModel(models.Model):
+    slug = models.SlugField(max_length=255)
+    slug_attribute = 'name'
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(getattr(self, self.slug_attribute))
+        super().save(*args, **kwargs)
+
+    class Meta:
+        abstract = True
+
+
+class Tag(SlugIncludedModel):
     name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
 
 
-class Category(models.Model):
+class Category(SlugIncludedModel):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
 
@@ -16,7 +30,7 @@ class Category(models.Model):
         return self.name
 
 
-class Genre(models.Model):
+class Genre(SlugIncludedModel):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
 
@@ -24,7 +38,7 @@ class Genre(models.Model):
         return self.name
 
 
-class Author(models.Model):
+class Author(SlugIncludedModel):
     name = models.CharField(max_length=255)
     birthdate = models.DateField(auto_now=False)
     bio = models.TextField()
@@ -35,7 +49,7 @@ class Author(models.Model):
         return self.name
 
 
-class Book(models.Model):
+class Book(SlugIncludedModel):
     title = models.CharField(max_length=255)
     subtitle = models.CharField(max_length=255)
     summary = models.TextField()
@@ -49,6 +63,8 @@ class Book(models.Model):
     tags = models.ManyToManyField('Tag', related_name='books')
     category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='books')
     genres = models.ManyToManyField('Genre', related_name='books')
+
+    slug_attribute = 'title'
 
     def __str__(self):
         return self.title
