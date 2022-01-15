@@ -51,9 +51,9 @@ class Author(SlugIncludedModel):
 
 class Book(SlugIncludedModel):
     title = models.CharField(max_length=255)
-    subtitle = models.CharField(max_length=255)
-    summary = models.TextField()
-    review = models.TextField()
+    subtitle = models.CharField(max_length=255, blank=True)
+    summary = models.TextField(blank=True)
+    review = models.TextField(blank=True)
     date_published = models.DateField(auto_now=False)
     date_added = models.DateTimeField(auto_now_add=True)
     url = models.CharField(max_length=512)
