@@ -1,10 +1,11 @@
 from django.contrib import admin
 
-from .models import Tag, Category, Genre, Book, Author
+from .models import Tag, Category, Genre, Book, Author, BookVisibility
 
 admin.site.register(Tag)
 admin.site.register(Category)
 admin.site.register(Genre)
+admin.site.register(BookVisibility)
 
 
 # admin.site.register(Book)

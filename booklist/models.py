@@ -69,3 +69,16 @@ class Book(SlugIncludedModel):
     def __str__(self):
         return self.title
 
+
+class Visibility(models.Model):
+    type = models.CharField(max_length=100)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.type
+
+
+class BookVisibility(Visibility):
+    pass
