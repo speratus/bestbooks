@@ -53,10 +53,10 @@ class Book(SlugIncludedModel):
     title = models.CharField(max_length=255)
     subtitle = models.CharField(max_length=255, blank=True)
     summary = models.TextField(blank=True)
-    review = models.TextField(blank=True)
+    # review = models.TextField(blank=True)
     date_published = models.DateField(auto_now=False)
     date_added = models.DateTimeField(auto_now_add=True)
-    url = models.URLField(max_length=512, blank=True)
+    # url = models.URLField(max_length=512, blank=True)
     rating = models.IntegerField()
     cover_art = models.URLField(max_length=512, blank=True)
     author = models.ManyToManyField('Author', related_name='books')
@@ -82,3 +82,20 @@ class Visibility(models.Model):
 
 class BookVisibility(Visibility):
     pass
+
+
+class BookUrl(models.Model):
+    url = models.URLField(max_length=255)
+    book = models.ForeignKey('Book', related_name='urls', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.url
+
+
+class Review(models.Model):
+    author = models.OneToOneField('Author', on_delete=models.CASCADE, related_name='reviews')
+    date_created = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
+    published = models.BooleanField()
+    contents = models.TextField()
+    book = models.ForeignKey('Book', on_delete=models.CASCADE)
