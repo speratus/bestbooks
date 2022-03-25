@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ book.title }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+<body>
+    <main class="section">
+        <div class="columns">
+            <div class="column">
+
+            </div>
+            <section class="column">
+                <h1 class="title">{{ book.title }}</h1>
+                <h4 class="subtitle">by {{ authors|first }}</h4>
+                <div class="content">
+                    {{ book.summary }}
+                </div>
+            </section>
+        </div>
+        <div class="content">
+            {{ review|first|get_item:"contents" }}
+        </div>
+    </main>
+</body>
+</html>
