@@ -98,4 +98,4 @@ class Review(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
     published = models.BooleanField()
     contents = models.TextField()
-    book = models.ForeignKey('Book', on_delete=models.CASCADE)
+    book = models.ForeignKey('Book', on_delete=models.CASCADE, related_name="reviews")
