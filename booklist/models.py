@@ -49,6 +49,13 @@ class Author(SlugIncludedModel):
         return self.name
 
 
+class Publisher(SlugIncludedModel):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
 class Book(SlugIncludedModel):
     title = models.CharField(max_length=255)
     subtitle = models.CharField(max_length=255, blank=True)
@@ -59,10 +66,11 @@ class Book(SlugIncludedModel):
     # url = models.URLField(max_length=512, blank=True)
     rating = models.IntegerField()
     cover_art = models.URLField(max_length=512, blank=True)
-    author = models.ManyToManyField('Author', related_name='books')
-    tags = models.ManyToManyField('Tag', related_name='books')
-    category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='books')
-    genres = models.ManyToManyField('Genre', related_name='books')
+    author = models.ManyToManyField(Author, related_name='books')
+    tags = models.ManyToManyField(Tag, related_name='books')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='books')
+    genres = models.ManyToManyField(Genre, related_name='books')
+    publisher = models.ForeignKey(Publisher, related_name='books', on_delete=models.CASCADE)
 
     slug_attribute = 'title'
 
@@ -99,3 +107,5 @@ class Review(models.Model):
     published = models.BooleanField()
     contents = models.TextField()
     book = models.ForeignKey('Book', on_delete=models.CASCADE, related_name="reviews")
+
+

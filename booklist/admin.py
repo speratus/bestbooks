@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Tag, Category, Genre, Book, Author, BookVisibility, BookUrl, Review
+from .models import Tag, Category, Genre, Book, Author, BookVisibility, BookUrl, Review, Publisher
 
 admin.site.register(Tag)
 admin.site.register(Category)
@@ -8,6 +8,7 @@ admin.site.register(Genre)
 admin.site.register(BookVisibility)
 admin.site.register(BookUrl)
 admin.site.register(Review)
+admin.site.register(Publisher)
 
 
 # admin.site.register(Book)
