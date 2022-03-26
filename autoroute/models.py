@@ -1,3 +1,10 @@
 from django.db import models
 
-# Create your models here.
+
+class AutoroutingModel(models.Model):
+
+    url_format = '%s/<%s:%s>/'
+    model_views = ['view']
+
+    class Meta:
+        abstract = True
