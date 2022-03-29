@@ -36,9 +36,8 @@ class AutoroutingModelConverter:
     def __init__(self, model: AutoroutingModel):
         self.model = model
 
-    def view_function(self, view_type, attribute_name):
+    def create_view_function(self, view_type, attribute_name):
         view_name = f'{self.var_to_model_name(self.model)}-{view_type}-{attribute_name}'
-
 
     @staticmethod
     def type_of_instance_attribute(model_instance, attribute: str):
@@ -63,19 +62,38 @@ class AutoroutingModelConverter:
         return model.url_format % (prefix, att_type, attribute)
 
 
-class ReadView:
-    view_type = 'read'
+class ViewType:
+    view_type = ''
 
-    def __init__(self, model: AutoroutingModel, attribute: str):
+    def __init__(self, model: AutoroutingModel, *args):
         self.model = model
-        self.attribute = attribute
+        self.attributes = args
+
+    @classmethod
+    def reference_view_name(cls, model, *args):
+        base = f'{AutoroutingModelConverter.var_to_model_name(model)}_{cls.view_type}'
+        items = [base] + list(args)
+        return '_'.join(items)
 
     def view_name(self):
-        return self.reference_view_name(self.model, self.attribute)
+        return self.reference_view_name(self.model, *self.attributes)
 
     def __str__(self):
-        self.view_name()
+        return self.view_name()
 
-    @staticmethod
-    def reference_view_name(model, attribute):
-        return f'{AutoroutingModelConverter.var_to_model_name(model)}_{ReadView.view_type}_{attribute}'
+    def gen_view_function(self):
+        raise NotImplemented("Method not implemented for base class")
+
+
+class ReadView(ViewType):
+    view_type = 'read'
+
+    def gen_view_function(self):
+        def view_fun(request, *args):
+            criteria = {}
+            for i in range(0, len(args)):
+                criteria[self.attributes[i]] = args[i]
+
+            item = self.model.objects.get(**criteria)
+
+            #TODO: get any specific attributes of the item, then return render along with the template name, and dictionary
