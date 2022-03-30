@@ -36,9 +36,6 @@ class AutoroutingModelConverter:
     def __init__(self, model: AutoroutingModel):
         self.model = model
 
-    def create_view_function(self, view_type, attribute_name):
-        view_name = f'{self.var_to_model_name(self.model)}-{view_type}-{attribute_name}'
-
     @staticmethod
     def type_of_instance_attribute(model_instance, attribute: str):
         val = getattr(model_instance, attribute)
@@ -65,9 +62,11 @@ class AutoroutingModelConverter:
 class ViewType:
     view_type = ''
 
-    def __init__(self, model: AutoroutingModel, *args):
+    def __init__(self, model: AutoroutingModel, query_attributes: list, affected_attributes: list):
         self.model = model
-        self.attributes = args
+        self.attributes = query_attributes
+        self.affected_attributes = affected_attributes
+        self.template_name = f'{self.view_name()}.html'
 
     @classmethod
     def reference_view_name(cls, model, *args):
@@ -89,11 +88,26 @@ class ReadView(ViewType):
     view_type = 'read'
 
     def gen_view_function(self):
+        attributes = self.attributes
+        affected = self.affected_attributes
+        model = self.model
+        model_name = AutoroutingModelConverter.var_to_model_name(model)
+        template_name = self.template_name
+
         def view_fun(request, *args):
+
             criteria = {}
             for i in range(0, len(args)):
-                criteria[self.attributes[i]] = args[i]
+                criteria[attributes[i]] = args[i]
 
-            item = self.model.objects.get(**criteria)
+            item = model.objects.get(**criteria)
 
-            #TODO: get any specific attributes of the item, then return render along with the template name, and dictionary
+            response_data = {}
+            for attribute in affected:
+                response_data[attribute] = getattr(item, attribute)
+
+            response_data[model_name] = item
+            return render(request, template_name, response_data)
+
+        view_fun.__name__ = self.view_name()
+        return view_fun
