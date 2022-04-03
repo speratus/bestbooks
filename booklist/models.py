@@ -2,8 +2,11 @@ from django.db import models
 
 from django.template.defaultfilters import slugify
 
+from autoroute.helpers import ReadView
+from autoroute.models import AutoroutingModel
 
-class SlugIncludedModel(models.Model):
+
+class SlugIncludedModel(AutoroutingModel):
     slug = models.SlugField(max_length=255, unique=True)
     slug_attribute = 'name'
 
