@@ -36,8 +36,8 @@ class AutoroutingModelConverter:
         'UUIDField': 'str',
     }
 
-    def __init__(self, model: AutoroutingModel):
-        self.model = model
+    def __init__(self, view_types: list):
+        self.view_types = view_types
 
     @staticmethod
     def type_of_instance_attribute(model_instance, attribute: str):
@@ -46,7 +46,7 @@ class AutoroutingModelConverter:
 
     @staticmethod
     def var_to_model_name(model):
-        return type(model).__name__.lower()
+        return model.__name__.lower()
 
     def type_of_model_attribute(self, model, attribute: str):
         raw_type = getattr(model, attribute).field.get_internal_type()
@@ -56,16 +56,30 @@ class AutoroutingModelConverter:
 
         return self.django_py_type_map[raw_type]
 
-    def urlconf_path_for_model_and_attribute(self, model: AutoroutingModel, attribute: str):
+    def urlconf_path_for_model_and_attributes(self, model: AutoroutingModel, view, attributes: list):
         prefix = self.var_to_model_name(model)
-        att_type = self.type_of_model_attribute(model, attribute)
-        return model.url_format % (prefix, att_type, attribute)
+        formatters = [prefix]
+        for attribute in attributes:
+            att_type = self.type_of_model_attribute(model, attribute)
+            formatters.append(f'{att_type}:{attribute}')
+
+        return view.url_format % tuple(formatters)
+
+    def gen_routes(self):
+        routes = []
+        for view in self.view_types:
+            url_pattern = self.urlconf_path_for_model_and_attributes(view.model, view, view.attributes)
+            view_fun = view.gen_view_function()
+            routes.append(path(url_pattern, view_fun))
+
+        return routes
 
 
 class ViewType:
     view_type = ''
+    url_format = '%s/<%s>/'
 
-    def __init__(self, model: AutoroutingModel, query_attributes: list, affected_attributes: list):
+    def __init__(self, model: type[AutoroutingModel], query_attributes: list, affected_attributes=[]):
         self.model = model
         self.attributes = query_attributes
         self.affected_attributes = affected_attributes
@@ -97,11 +111,11 @@ class ReadView(ViewType):
         model_name = AutoroutingModelConverter.var_to_model_name(model)
         template_name = self.template_name
 
-        def view_fun(request, *args):
+        def view_fun(request, **args):
 
             criteria = {}
             for i in range(0, len(args)):
-                criteria[attributes[i]] = args[i]
+                criteria[attributes[i]] = args[attributes[i]]
 
             item = model.objects.get(**criteria)
 

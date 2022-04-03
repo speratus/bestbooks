@@ -1,12 +1,11 @@
 from django.db import models
 
-from autoroute.helpers import ViewType
-
 
 class AutoroutingModel(models.Model):
 
-    url_format = '%s/<%s>/'
-    model_views = list[ViewType]
+    model_views = []
+    # TODO: refactor this model so that it can be deleted.
 
     class Meta:
         abstract = True
+
