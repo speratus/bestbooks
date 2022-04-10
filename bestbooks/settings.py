@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'booklist',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
+    'wagtail.contrib.modeladmin',
     'wagtail.embeds',
     'wagtail.sites',
     'wagtail.users',
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     'modelcluster',
     'taggit',
     'pages',
+    'links',
 ]
 
 MIDDLEWARE = [
