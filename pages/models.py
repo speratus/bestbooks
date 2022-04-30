@@ -18,3 +18,20 @@ class StaticPage(Page):
     content_panels = Page.content_panels + [
         StreamFieldPanel('body')
     ]
+
+
+class AverageReadingWpm(models.Model):
+
+    reading_time = models.IntegerField(default=238)
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super(AverageReadingWpm, self).save(*args, **kwargs)
+
+    @classmethod
+    def load(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+
+    def __str__(self):
+        return f"Average Words Per Minute: {self.reading_time}"
